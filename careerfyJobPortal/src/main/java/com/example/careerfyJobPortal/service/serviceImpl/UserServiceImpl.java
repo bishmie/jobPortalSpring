@@ -1,15 +1,17 @@
-package com.example.careerfyJobPortal.service;
+package com.example.careerfyJobPortal.service.serviceImpl;
 
-import com.example.careerfyJobPortal.adviser.AppWideExceptionHandler;
 import com.example.careerfyJobPortal.dto.UserDto;
 import com.example.careerfyJobPortal.dto.UserloggingDto;
 import com.example.careerfyJobPortal.entity.User;
 import com.example.careerfyJobPortal.repositry.UserRepositry;
+import com.example.careerfyJobPortal.service.UserService;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -56,5 +58,19 @@ public class UserServiceImpl implements UserService {
             return passwordEncoder.matches(userloggingDto.getPassword(), user.getPassword());
         }
         return false; // User not found
+    }
+
+
+
+
+    @Override
+    public List<UserDto> getAllUsers() {
+        return modelMapper.map(userRepositry.findAll(), new TypeToken<List<UserDto>>(){}.getType());
+    }
+
+    @Override
+    public Long countUsers() {
+
+        return userRepositry.countUsers();
     }
 }

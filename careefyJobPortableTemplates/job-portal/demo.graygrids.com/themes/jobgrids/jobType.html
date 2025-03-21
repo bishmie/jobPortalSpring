@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Categories</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Font Awesome CDN -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <!-- SweetAlert2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      height: 100vh;
+      background-color: #343a40;
+      padding-top: 30px;
+      transition: all 0.3s ease;
+    }
+    .sidebar a {
+      color: #d1d1d1;
+      text-decoration: none;
+      font-size: 18px;
+      padding: 15px 20px;
+      display: block;
+      transition: all 0.3s ease;
+    }
+    .sidebar a:hover {
+      background-color: #007bff;
+      color: #fff;
+    }
+    .sidebar .brand-logo {
+      color: white;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      padding-bottom: 30px;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 250px;
+      padding: 30px;
+    }
+    .header {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 {
+      font-size: 24px;
+    }
+
+    /* Glassmorphism Cards */
+    .card-glass {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 20px;
+      transition: transform 0.3s ease;
+      text-align: center;
+      color: #333;
+    }
+    .card-glass:hover {
+      transform: translateY(-5px);
+    }
+    .card-icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+      color: #007bff;
+    }
+    .card-title {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .card-number {
+      font-size: 30px;
+      font-weight: bold;
+    }
+
+    /* Modern Table Styling */
+    .modern-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+    }
+    .modern-table thead tr {
+      background: #007bff;
+      color: white;
+      text-align: left;
+    }
+    .modern-table th {
+      padding: 12px;
+      border-radius: 5px 5px 0 0;
+    }
+    .modern-table tbody tr {
+      background: white;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+    .modern-table tbody tr:hover {
+      transform: scale(1.02);
+    }
+    .modern-table td {
+      padding: 12px;
+    }
+
+    td {
+      font-size: 14px;
+    }
+
+    .table-container {
+      margin-top: 20px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .action-btns button {
+      margin-right: 5px;
+      padding: 5px 17px;
+    }
+
+    /* Blue Add Button */
+    #addCategory {
+      background-color: #007bff;
+      color: white;
+    }
+
+    #addCategory:hover {
+      background-color: #0056b3;
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="brand-logo">Admin Panel</div>
+  <a href="admindashboard.html">Dashboard</a>
+  <a href="#">Users</a>
+  <a href="#">Job Listings</a>
+  <a href="#">Job Categories</a>
+  <a href="#">Settings</a>
+  <a href="#">Logout</a>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+  <div class="row">
+    <!-- Add Job Category Form -->
+    <div class="col-md-4">
+      <div class="card-glass">
+        <h5 class="mb-3">Add Job Category</h5>
+        <input type="text" id="categoryName" class="form-control mb-2" placeholder="Enter category name">
+        <button class="btn w-100" id="addCategory">Add Category</button>
+      </div>
+    </div>
+
+    <!-- Job Categories Table -->
+    <div class="col-md-8">
+      <div class="table-container">
+        <h5 class="mb-3">Job Categories</h5>
+        <table class="table modern-table">
+          <thead class="table-dark">
+          <tr>
+            <th>#</th>
+            <th>Category Name</th>
+            <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody id="categoryTableBody">
+          <!-- Categories will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/jobType.js">
+
+</script>
+
+</body>
+</html>

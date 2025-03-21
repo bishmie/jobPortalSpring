@@ -8,6 +8,7 @@ import com.example.careerfyJobPortal.repositry.JobApplicationRepository;
 import com.example.careerfyJobPortal.repositry.JobRepositry;
 import com.example.careerfyJobPortal.repositry.UserRepositry;
 import com.example.careerfyJobPortal.service.JobApplicationService;
+import com.example.careerfyJobPortal.utility.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,17 +25,21 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     private UserRepositry userRepository;
 
     public JobApplication saveJobApplication(JobApplicationDTO jobApplicationDTO) {
+        // Fetch Job and User entities by their IDs
         Job job = jobRepository.findById(jobApplicationDTO.getJobId())
                 .orElseThrow(() -> new RuntimeException("Job not found"));
+
         User user = userRepository.findById(Math.toIntExact(jobApplicationDTO.getUserId()))
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // Create a new JobApplication entity
         JobApplication jobApplication = new JobApplication();
+        jobApplication.setResume(jobApplicationDTO.getResume());
+        jobApplication.setStatus(jobApplicationDTO.getStatus());
         jobApplication.setJob(job);
         jobApplication.setUser(user);
-        jobApplication.setResume(jobApplicationDTO.getResume());
-        jobApplication.setStatus("Pending");
 
+        // Save the JobApplication to the database
         return jobApplicationRepository.save(jobApplication);
     }
 }

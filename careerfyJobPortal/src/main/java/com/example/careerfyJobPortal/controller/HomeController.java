@@ -1,4 +1,4 @@
-package com.jobportal.controllers;
+package com.example.careerfyJobPortal.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
