@@ -1,12 +1,10 @@
-// Function to fetch job categories and display them
 function loadJobCategories() {
     fetch('http://localhost:8090/jobType/getAll')
         .then(response => response.json())
         .then(jobCategories => {
             const cardsContainer = document.getElementById('jobCategoryCards');
-            cardsContainer.innerHTML = ''; // Clear any existing cards
+            cardsContainer.innerHTML = '';
 
-            // Icon mapping for different job categories
             const iconMap = {
                 'Technical Support': 'lni-cog',
                 'Business Development': 'lni-layers',
@@ -25,8 +23,7 @@ function loadJobCategories() {
                 card.classList.add('wow', 'fadeInUp');
                 card.setAttribute('data-wow-delay', '.2s');
 
-                // Use the iconMap to get the icon for each category
-                const iconClass = iconMap[category.name] || 'lni-default'; // Default if no mapping
+                const iconClass = iconMap[category.name] || 'lni-default';
 
                 card.innerHTML = `
                         <a href="browse-jobs.html" class="single-cat">
@@ -43,5 +40,4 @@ function loadJobCategories() {
         .catch(error => console.error('Error loading job categories:', error));
 }
 
-// Load job categories when the page is loaded
 window.onload = loadJobCategories;

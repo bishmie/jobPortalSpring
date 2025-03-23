@@ -22,7 +22,12 @@ public class JobApplicationController {
 
     @PostMapping("/add")
     public JobApplication createJobApplication(@RequestBody JobApplicationDTO jobApplicationDTO) {
-        // Call the service method to save the JobApplication
+        return jobApplicationService.saveJobApplication(jobApplicationDTO);
+    }
+
+
+    @PostMapping("/update-status")
+    public JobApplication updateJobApplicationStatus(@RequestBody JobApplicationDTO jobApplicationDTO) {
         return jobApplicationService.saveJobApplication(jobApplicationDTO);
     }
 }

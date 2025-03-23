@@ -15,7 +15,6 @@ public class JobApplication {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
     private String resume; // Resume URL or File Path
     private String status; // Pending, Approved, Rejected
 

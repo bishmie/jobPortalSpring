@@ -42,7 +42,6 @@ public class JobServiceImpl implements JobService {
         job.setSalary(jobDTO.getSalary());
         job.setDeadline(jobDTO.getPostedDate());
 
-        // Set Company, Employer, and JobType
         Company company = companyRepository.findById(Math.toIntExact(jobDTO.getCompanyId())).orElse(null);
         User employer = userRepository.findById(Math.toIntExact(jobDTO.getEmployerId())).orElse(null);
         JobType jobType = jobTypeRepository.findById(jobDTO.getJobTypeId()).orElse(null);
@@ -59,7 +58,6 @@ public class JobServiceImpl implements JobService {
         Job existingJob = jobRepository.findById(id).orElse(null);
 
         if (existingJob == null) {
-            // Handle job not found (optional, e.g., throw an exception or return null)
             return null;
         }
 
@@ -73,7 +71,6 @@ public class JobServiceImpl implements JobService {
         existingJob.setSalary(jobDTO.getSalary());
         existingJob.setDeadline(jobDTO.getPostedDate());
 
-        // Set the Company, Employer, and JobType (if necessary)
         Company company = companyRepository.findById(Math.toIntExact(jobDTO.getCompanyId())).orElse(null);
         User employer = userRepository.findById(Math.toIntExact(jobDTO.getEmployerId())).orElse(null);
         JobType jobType = jobTypeRepository.findById(jobDTO.getJobTypeId()).orElse(null);

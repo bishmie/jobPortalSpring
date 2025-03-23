@@ -24,22 +24,35 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     @Autowired
     private UserRepositry userRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     public JobApplication saveJobApplication(JobApplicationDTO jobApplicationDTO) {
-        // Fetch Job and User entities by their IDs
         Job job = jobRepository.findById(jobApplicationDTO.getJobId())
                 .orElseThrow(() -> new RuntimeException("Job not found"));
 
         User user = userRepository.findById(Math.toIntExact(jobApplicationDTO.getUserId()))
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Create a new JobApplication entity
         JobApplication jobApplication = new JobApplication();
         jobApplication.setResume(jobApplicationDTO.getResume());
         jobApplication.setStatus(jobApplicationDTO.getStatus());
         jobApplication.setJob(job);
         jobApplication.setUser(user);
 
-        // Save the JobApplication to the database
         return jobApplicationRepository.save(jobApplication);
+    }
+
+
+    private void sendApprovalEmail(JobApplication jobApplication) {
+        User user = jobApplication.getUser();
+        String emailSubject = "Your Job Application Status";
+        String emailBody = "Dear " + user.getUsername() + ",\n\n" +
+                "Congratulations! Your job application for the position of " + jobApplication.getJob().getTitle() + " has been approved.\n\n" +
+                "We look forward to working with you.\n\n" +
+                "Best regards,\nCareerfy Job Portal";
+
+
+        emailService.sendEmail(user.getEmail(), emailSubject, emailBody);
     }
 }
