@@ -52,7 +52,7 @@ public class JobTypeServiceImpl implements JobTypeService {
         } else {
             throw new RuntimeException("Job type not found");
         }
-    }
+    }   
 
     @Override
     public List<JobTypeDtO> getAllJobTypes() {

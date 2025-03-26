@@ -4,93 +4,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Listings</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        /* styles.css */
-        #job-cards-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            padding: 20px;
-        }
-
         .job-card {
-            background-color: #f9f9f9;
             border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px;
             border-radius: 8px;
-            padding: 20px;
-            width: calc(33.333% - 40px); /* Three cards per row */
-            box-sizing: border-box;
-            transition: transform 0.3s ease;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
         }
-
-        .job-card:hover {
-            transform: translateY(-10px);
-        }
-
-        .job-card h3 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .job-card p {
-            color: #555;
-            margin-bottom: 8px;
-        }
-
-        .job-card strong {
-            font-weight: bold;
-        }
-
     </style>
 </head>
 <body>
-<div id="job-cards-container"></div>
 
+<h2>Job Listings</h2>
+
+<!-- Start Find Job Area -->
+<section class="find-job section">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section-title">
+                    <span class="wow fadeInDown" data-wow-delay=".2s">Hot Jobs</span>
+                    <h2 class="wow fadeInUp" data-wow-delay=".4s">Browse Recent Jobs</h2>
+                    <p class="wow fadeInUp" data-wow-delay=".6s">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form.</p>
+                </div>
+            </div>
+        </div>
+        <div class="single-head">
+            <div class="row" id="job-list">
+                <!-- Job cards will be dynamically inserted here -->
+            </div>
+        </div>
+
+    </div>
+</section>
+<!-- /End Find Job Area -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+function fetchJobs() {
+$.ajax({
+url: 'http://localhost:8090/jobs/getAll',  // Ensure this is the correct API URL
+method: 'GET',
+success: function(response) {
+console.log('API Response:', response);  // Log the response for debugging
 
-    // scripts.js
-    document.addEventListener("DOMContentLoaded", function() {
-        // Fetch all jobs from backend
-        fetchJobs();
-    });
+if (response && response.length > 0) {
+let jobCards = '';
+response.forEach(job => {
+jobCards += `
+<div class="col-lg-6 col-12">
+    <div class="single-job wow fadeInUp" data-wow-delay=".3s">
+<!--        <div class="job-image">-->
+<!--            <img src="assets/images/jobs/img1.png" alt="#">-->
+<!--        </div> -->
+        <div class="job-card">
+            <h4><a href="job-details.html">${job.title}</a></h4>
+            <p>${job.description}</p>
+            <ul>
+                <li><i class="lni lni-website"></i><a href="#"> ${job.companyName}</a></li>
+                <li><i class="lni lni-dollar"></i> ${job.salary}</li>
+                <li><i class="lni lni-map-marker"></i> ${job.location}</li>
+            </ul>
+        </div>
+        <div class="job-button">
+            <ul>
+                <li><a href="job-details.html">Apply</a></li>
+                <li><span>${job.type}</span></li>
+            </ul>
+        </div>
+    </div>
+</div>`;
+});
 
-    function fetchJobs() {
-        fetch('http://localhost:8090/jobs/getAll') // Adjust the URL as per your server
-            .then(response => response.json())  // Convert the response to JSON
-            .then(data => {
-                displayJobs(data);
-            })
-            .catch(error => {
-                console.error('Error fetching jobs:', error);
-            });
-    }
+// Insert the generated job cards into the job-list container
+$('#job-list').html(jobCards);
+} else {
+$('#job-list').html('<p>No jobs available at the moment.</p>');
+}
+},
+error: function(xhr, status, error) {
+console.error('Error fetching jobs:', status, error);  // Log the error status and message
+console.error('Response Text:', xhr.responseText);  // Log the full error response text
+$('#job-list').html('<p>Failed to load job listings. Please try again later.</p>');
+}
+});
+}
 
-    function displayJobs(jobs) {
-        const container = document.getElementById('job-cards-container');
-        container.innerHTML = ''; // Clear existing cards
-
-        jobs.forEach(job => {
-            // Create a new card element
-            const card = document.createElement('div');
-            card.classList.add('job-card');
-
-            // Add content to the card
-            card.innerHTML = `
-            <h3>${job.title}</h3>
-            <p><strong>Location:</strong> ${job.location}</p>
-            <p><strong>Type:</strong> ${job.type}</p>
-            <p><strong>Salary:</strong> ${job.salary}</p>
-            <p><strong>Description:</strong> ${job.description}</p>
-            <p><strong>Responsibilities:</strong> ${job.responsibilities}</p>
-            <p><strong>Experience:</strong> ${job.experience}</p>
-            <p><strong>Deadline:</strong> ${job.deadline}</p>
-        `;
-
-            // Append the card to the container
-            container.appendChild(card);
-        });
-    }
-
+$(document).ready(function() {
+fetchJobs();
+});
 </script>
+
 </body>
 </html>
