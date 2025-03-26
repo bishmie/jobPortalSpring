@@ -68,6 +68,7 @@ public class SecurityConfiguration {
                                 "jobType/delete/{id}",
                                 "users/getAllCandidates",
                                 "users/getAllEmployers",
+                                "users/deactivate",
                                 "/uploads/**",
                                 "/api/v1/auth/refreshToken",
                                 "/v3/api-docs/**",

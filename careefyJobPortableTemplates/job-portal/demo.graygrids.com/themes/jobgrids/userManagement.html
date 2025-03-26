@@ -149,6 +149,12 @@
             font-size: 12px;
             border-radius: 40px;
         }
+
+        .fa-ellipsis-v{
+            color: #a9a8a8;
+            font-size: 15px !important;
+            transform: translateY(-25px);
+        }
     </style>
 </head>
 <body>
@@ -193,21 +199,28 @@
                 url: url,
                 method: 'GET',
                 success: function (response) {
+                    console.log(response)
                     $('#userCardsContainer').html('');
                     response.forEach(function (user) {
                         const randomColor = getRandomColor();
                         const userCardHTML = `
-                        <div class="user-card" data-username="${user.username.toLowerCase()}">
-                            <div class="avatar" style="background-color: ${randomColor};">
-                                ${user.username.charAt(0).toUpperCase()}
-                            </div>
-                            <div class="user-info">
-                                <h5>${user.username}</h5>
-                                <p>${user.email}</p>
-                                <p>${user.accountType}</p>
-                            </div>
-                            <i class="fas fa-ellipsis-v options-icon"></i>
-                        </div>
+                       <div class="user-card" data-username="${user.username.toLowerCase()}">
+    <div class="avatar" style="background-color: ${randomColor};">
+        ${user.username.charAt(0).toUpperCase()}
+    </div>
+    <div class="user-info">
+        <h5>${user.username}</h5>
+        <p>${user.email}</p>
+        <p style="font-size: 12px;">
+            ${user.accountType} |
+            <span style="font-size: 11px; color: ${user.active ? 'green' : 'red'};">
+                ${user.active ? 'Active' : 'Deactive'}
+            </span>
+        </p>
+    </div>
+    <i class="fas fa-ellipsis-v options-icon"></i>
+
+
                     `;
                         $('#userCardsContainer').append(userCardHTML);
                     });
@@ -243,7 +256,7 @@
         });
 
         // Load candidates by default on page load
-        loadUsers('http://localhost:8090/users/getAllCandidates');
+        loadUsers('http://localhost:8090/users/getAll');
     });
 
 </script>

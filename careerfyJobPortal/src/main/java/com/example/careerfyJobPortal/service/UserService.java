@@ -1,9 +1,11 @@
 package com.example.careerfyJobPortal.service;
 
+import com.example.careerfyJobPortal.dto.ResponseDTO;
 import com.example.careerfyJobPortal.dto.UserDto;
 import com.example.careerfyJobPortal.dto.UserloggingDto;
 import com.example.careerfyJobPortal.entity.User;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
@@ -24,6 +26,9 @@ public interface UserService {
     List<UserDto> getAllCandidates();
 
     List<UserDto> getAllEmployers();
+
+    void deactivateUser(UserDto userDTO);
+
 
 //    int addUser(UserDto userDTO);
 

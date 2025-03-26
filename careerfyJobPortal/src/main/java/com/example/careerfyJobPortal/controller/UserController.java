@@ -15,6 +15,7 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,8 +49,6 @@ public class UserController {
 //    }
 
 
-
-
 //    @PostMapping("/login")
 //    public ResponseUtil loginUser(@RequestBody @Valid UserloggingDto userloggingDto) throws Exception {
 //        boolean loginResult = userService.loginUser(userloggingDto);
@@ -70,8 +69,6 @@ public class UserController {
     public List<UserDto> getAllUsers() {
         return userService.getAllUsers();
     }
-
-
 
 
     @GetMapping("/totalUsers")
@@ -114,19 +111,23 @@ public class UserController {
 
 
     @GetMapping("/getAllCandidates")
-    public List<UserDto> getAllCandidates()  {
+    public List<UserDto> getAllCandidates() {
 
         return userService.getAllCandidates();
     }
 
     @GetMapping("/getAllEmployers")
-    public List<UserDto> getAllEmployers()  {
+    public List<UserDto> getAllEmployers() {
 
         return userService.getAllEmployers();
     }
 
 
-
+    @PostMapping(value = "/deactivate")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ResponseDTO> deactivateUser(@RequestBody UserDto userDTO) {
+        userService.deactivateUser(userDTO);
+        return ResponseEntity.ok(new ResponseDTO(VarList.OK, "User Deactivated", null));
     }
 
-
+}

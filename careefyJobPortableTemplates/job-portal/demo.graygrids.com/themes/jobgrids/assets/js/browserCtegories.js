@@ -6,16 +6,19 @@ function loadJobCategories() {
             cardsContainer.innerHTML = '';
 
             const iconMap = {
-                'Technical Support': 'lni-cog',
-                'Business Development': 'lni-layers',
-                'Real Estate Business': 'lni-home',
-                'Share Market Analysis': 'lni-search',
-                'Finance & Banking Service': 'lni-investment',
-                'IT & Networking Services': 'lni-cloud-network',
-                'Restaurant Services': 'lni-restaurant',
-                'Defence & Fire Service': 'lni-fireworks',
-                // Add more categories here as needed
+                'Garment': 'lni-tshirt',
+                'IT': 'lni-code',
+                'Health': 'lni-heart',
+                'Food': 'lni-restaurant',
+                'Educational': 'lni-graduation',
+                'Construction': 'lni-construction',
+                'Engineering': 'lni-cog',
+                'Civil': 'lni-apartment',
+                'Fashion': 'lni-tshirt',
+                'Mechanical': 'lni-cogs',  // FIXED
+                'hotel': 'lni-apartment',
             };
+
 
             jobCategories.forEach(category => {
                 const card = document.createElement('div');

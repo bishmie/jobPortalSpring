@@ -24,21 +24,20 @@ public class User {
     @Transient
     private String confirmPassword;
     private AccountType accountType;
-
+    private boolean isActive;
 
     public User() {
     }
 
-    public User(int id, String username, String email, String password, String confirmPassword, AccountType accountType) {
+    public User(int id, String username, String email, String password, String confirmPassword, AccountType accountType, boolean isActive) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
         this.confirmPassword = confirmPassword;
         this.accountType = accountType;
+        this.isActive = isActive;
     }
-
-
 
     public int getId() {
         return id;
@@ -88,6 +87,14 @@ public class User {
         this.confirmPassword = confirmPassword;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -97,6 +104,7 @@ public class User {
                 ", password='" + password + '\'' +
                 ", confirmPassword='" + confirmPassword + '\'' +
                 ", accountType=" + accountType +
+                ", isActive=" + isActive +
                 '}';
     }
 }

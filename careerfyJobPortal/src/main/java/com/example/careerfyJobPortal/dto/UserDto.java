@@ -21,13 +21,15 @@ public class UserDto {
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d!@#$%^&*()_+]{8,}")
     private String password;
     private AccountType accountType;
+    private boolean isActive;
 
-    public UserDto(int id, String username, String email, String password, AccountType accountType) {
+    public UserDto(int id, String username, String email, String password, AccountType accountType, boolean isActive) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
         this.accountType = accountType;
+        this.isActive = isActive;
     }
 
     public UserDto() {
@@ -74,6 +76,14 @@ public class UserDto {
         this.accountType = accountType;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
     @Override
     public String toString() {
         return "UserDto{" +
@@ -82,6 +92,7 @@ public class UserDto {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", accountType=" + accountType +
+                ", isActive=" + isActive +
                 '}';
     }
 }

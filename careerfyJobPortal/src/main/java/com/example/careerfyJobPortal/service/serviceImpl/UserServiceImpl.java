@@ -1,5 +1,6 @@
 package com.example.careerfyJobPortal.service.serviceImpl;
 
+import com.example.careerfyJobPortal.dto.ResponseDTO;
 import com.example.careerfyJobPortal.dto.UserDto;
 import com.example.careerfyJobPortal.entity.AccountType;
 import com.example.careerfyJobPortal.entity.User;
@@ -9,6 +10,7 @@ import com.example.careerfyJobPortal.utility.VarList;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -120,6 +122,7 @@ public class UserServiceImpl implements UserDetailsService,UserService {
             // Encrypt the password
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            user.setActive(true);
 
             // Set default role if not provided
             if (user.getAccountType() == null) {
@@ -155,5 +158,16 @@ public class UserServiceImpl implements UserDetailsService,UserService {
                 .map(user -> modelMapper.map(user, UserDto.class)) // Convert User to UserDto
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void deactivateUser(UserDto userDTO) {
+        if (userRepositry.existsByEmail(userDTO.getEmail())) {
+            User user = userRepositry.findByEmail(userDTO.getEmail());
+            user.setActive(false);
+            userRepositry.save(user);
+        }
+    }
+
+
 
 }
