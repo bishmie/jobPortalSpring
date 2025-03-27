@@ -1,5 +1,6 @@
 package com.example.careerfyJobPortal.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -19,15 +20,22 @@ import java.time.LocalDate;
     private String location;
     private String type; // Full-time, Part-time, Remote
     private Double salary;
-    private Long companyId;
-    private Long employerId;
     private Long jobTypeId;
-    private LocalDate postedDate;
+    private LocalDate deadline;
+    private String CompanyName;
+//        @NotBlank(message = "Email cannot be null")
+//        @Email(message = "Invalid email format")
+    private String email;
+    private String companyDescription;
+    private String logo;
+    private int employerId;
+
 
         public JobDTO() {
         }
 
-        public JobDTO(Long id, String title, String description, String responsibilities, String experience, String location, String type, Double salary, Long companyId, Long employerId, Long jobTypeId, LocalDate postedDate) {
+
+        public JobDTO(Long id, String title, String description, String responsibilities, String experience, String location, String type, Double salary, Long jobTypeId, LocalDate deadline, String companyName, String email, String companyDescription, String logo, int employerId) {
             this.id = id;
             this.title = title;
             this.description = description;
@@ -36,10 +44,13 @@ import java.time.LocalDate;
             this.location = location;
             this.type = type;
             this.salary = salary;
-            this.companyId = companyId;
-            this.employerId = employerId;
             this.jobTypeId = jobTypeId;
-            this.postedDate = postedDate;
+            this.deadline = deadline;
+            CompanyName = companyName;
+            this.email = email;
+            this.companyDescription = companyDescription;
+            this.logo = logo;
+            this.employerId = employerId;
         }
 
         public Long getId() {
@@ -106,22 +117,6 @@ import java.time.LocalDate;
             this.salary = salary;
         }
 
-        public Long getCompanyId() {
-            return companyId;
-        }
-
-        public void setCompanyId(Long companyId) {
-            this.companyId = companyId;
-        }
-
-        public Long getEmployerId() {
-            return employerId;
-        }
-
-        public void setEmployerId(Long employerId) {
-            this.employerId = employerId;
-        }
-
         public Long getJobTypeId() {
             return jobTypeId;
         }
@@ -130,12 +125,52 @@ import java.time.LocalDate;
             this.jobTypeId = jobTypeId;
         }
 
-        public LocalDate getPostedDate() {
-            return postedDate;
+        public LocalDate getDeadline() {
+            return deadline;
         }
 
-        public void setPostedDate(LocalDate postedDate) {
-            this.postedDate = postedDate;
+        public void setDeadline(LocalDate deadline) {
+            this.deadline = deadline;
+        }
+
+        public String getCompanyName() {
+            return CompanyName;
+        }
+
+        public void setCompanyName(String companyName) {
+            CompanyName = companyName;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getCompanyDescription() {
+            return companyDescription;
+        }
+
+        public void setCompanyDescription(String companyDescription) {
+            this.companyDescription = companyDescription;
+        }
+
+        public String getLogo() {
+            return logo;
+        }
+
+        public void setLogo(String logo) {
+            this.logo = logo;
+        }
+
+        public int getEmployerId() {
+            return employerId;
+        }
+
+        public void setEmployerId(int employerId) {
+            this.employerId = employerId;
         }
 
         @Override
@@ -149,10 +184,13 @@ import java.time.LocalDate;
                     ", location='" + location + '\'' +
                     ", type='" + type + '\'' +
                     ", salary=" + salary +
-                    ", companyId=" + companyId +
-                    ", employerId=" + employerId +
                     ", jobTypeId=" + jobTypeId +
-                    ", postedDate=" + postedDate +
+                    ", deadline=" + deadline +
+                    ", CompanyName='" + CompanyName + '\'' +
+                    ", email='" + email + '\'' +
+                    ", companyDescription='" + companyDescription + '\'' +
+                    ", logo='" + logo + '\'' +
+                    ", employerId=" + employerId +
                     '}';
         }
     }

@@ -21,11 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-/**
- * @author udarasan
- * @TimeStamp 2023-07-15 15:00
- * @ProjectDetails invoice_service
- */
+
 @Component
 public class JwtFilter extends OncePerRequestFilter {
     @Autowired
@@ -34,6 +30,9 @@ public class JwtFilter extends OncePerRequestFilter {
     private UserService userService;
     @Value("${jwt.secret}")
     private String secretKey;
+
+
+    private String secret = "YourSecretKey"; // JWT Token secret key
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
@@ -74,5 +73,19 @@ public class JwtFilter extends OncePerRequestFilter {
     private Claims getClaimsFromJwtToken(String token) {
         return Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(token).getBody();
     }
+
+
+
+
+     // **Token eken User ID eka extract karanna**
+        public String extractUserId(String token) {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(secret)
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.getSubject(); // User ID eka return karanawa
+
+    }
+
 
 }

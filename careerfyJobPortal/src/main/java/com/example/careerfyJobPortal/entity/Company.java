@@ -19,19 +19,18 @@ public class Company {
     private String companyDescription;
     private String logo; // Logo (image URL or file path)
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
-    private List<Job> jobs;
+//    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+//    private List<Job> jobs;
 
     public Company() {
     }
 
-    public Company(Long id, String name, String email, String companyDescription, String logo, List<Job> jobs) {
+    public Company(Long id, String name, String email, String companyDescription, String logo) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.companyDescription = companyDescription;
         this.logo = logo;
-        this.jobs = jobs;
     }
 
     public Long getId() {
@@ -50,11 +49,11 @@ public class Company {
         this.name = name;
     }
 
-    public String getEmail() {
+    public @NotBlank(message = "email is null") @Email(message = "invalid Email") String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(@NotBlank(message = "email is null") @Email(message = "invalid Email") String email) {
         this.email = email;
     }
 
@@ -74,14 +73,6 @@ public class Company {
         this.logo = logo;
     }
 
-    public List<Job> getJobs() {
-        return jobs;
-    }
-
-    public void setJobs(List<Job> jobs) {
-        this.jobs = jobs;
-    }
-
     @Override
     public String toString() {
         return "Company{" +
@@ -90,7 +81,6 @@ public class Company {
                 ", email='" + email + '\'' +
                 ", companyDescription='" + companyDescription + '\'' +
                 ", logo='" + logo + '\'' +
-                ", jobs=" + jobs +
                 '}';
     }
 }

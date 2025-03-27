@@ -1,6 +1,7 @@
 package com.example.careerfyJobPortal.controller;
 
 
+import com.example.careerfyJobPortal.config.JwtFilter;
 import com.example.careerfyJobPortal.dto.AuthDTO;
 import com.example.careerfyJobPortal.dto.ResponseDTO;
 import com.example.careerfyJobPortal.dto.UserDto;
@@ -19,7 +20,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -34,6 +37,9 @@ public class UserController {
     private ModelMapper modelMapper;
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private JwtFilter jwtFilter;
 
 //    @PostMapping("/register")
 //    public ResponseUtil registerUser(@RequestBody @Valid UserDto userDto) throws Exception {
@@ -129,5 +135,23 @@ public class UserController {
         userService.deactivateUser(userDTO);
         return ResponseEntity.ok(new ResponseDTO(VarList.OK, "User Deactivated", null));
     }
+
+    @GetMapping("/getUserIdFromToken")
+    public ResponseEntity<?> getUserId(@RequestHeader("Authorization") String token) {
+        try {
+            // **Step 1: Token Decode**
+            String jwt = token.replace("Bearer ", ""); // Bearer prefix eka ain karanawa
+            String userId = jwtFilter.extractUserId(jwt); // Token eken userId ganna
+
+            // **Step 2: Response eka return karanawa**
+            Map<String, String> response = new HashMap<>();
+            response.put("userId", userId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+        }
+    }
+
+
 
 }

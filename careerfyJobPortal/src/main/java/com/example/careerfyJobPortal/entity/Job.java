@@ -2,6 +2,8 @@ package com.example.careerfyJobPortal.entity;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -26,27 +28,27 @@ public class Job {
     private Double salary;
 
     @ManyToOne
-    @JoinColumn(name = "company_id")
-    private Company company;
+    @JoinColumn(name = "job_type_id")
+    private JobType jobType;
+    private LocalDate deadline;
+
+    private String CompanyName;
+//    @NotBlank(message = "email is null")
+//    @Email(message = "invalid Email")
+    private String email; // Company Email ekak
+    private String companyDescription;
+    private String logo;
 
     @ManyToOne
     @JoinColumn(name = "employer_id")
     private User employer;
 
-    @ManyToOne
-    @JoinColumn(name = "job_type_id")
-    private JobType jobType;
+
 
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL)
     private List<JobApplication> applications;
 
-    private LocalDate deadline;
-
-    public Job() {
-    }
-
-
-    public Job(Long id, String title, String description, String responsibilities, String experience, String location, String type, Double salary, Company company, User employer, JobType jobType, List<JobApplication> applications, LocalDate deadline) {
+    public Job(Long id, String title, String description, String responsibilities, String experience, String location, String type, Double salary, JobType jobType, LocalDate deadline, String companyName, String email, String companyDescription, String logo, User employer, List<JobApplication> applications) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -55,11 +57,17 @@ public class Job {
         this.location = location;
         this.type = type;
         this.salary = salary;
-        this.company = company;
-        this.employer = employer;
         this.jobType = jobType;
-        this.applications = applications;
         this.deadline = deadline;
+        CompanyName = companyName;
+        this.email = email;
+        this.companyDescription = companyDescription;
+        this.logo = logo;
+        this.employer = employer;
+        this.applications = applications;
+    }
+
+    public Job() {
     }
 
     public Long getId() {
@@ -126,12 +134,52 @@ public class Job {
         this.salary = salary;
     }
 
-    public Company getCompany() {
-        return company;
+    public JobType getJobType() {
+        return jobType;
     }
 
-    public void setCompany(Company company) {
-        this.company = company;
+    public void setJobType(JobType jobType) {
+        this.jobType = jobType;
+    }
+
+    public LocalDate getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(LocalDate deadline) {
+        this.deadline = deadline;
+    }
+
+    public String getCompanyName() {
+        return CompanyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        CompanyName = companyName;
+    }
+
+    public @NotBlank(message = "email is null") @Email(message = "invalid Email") String getEmail() {
+        return email;
+    }
+
+    public void setEmail(@NotBlank(message = "email is null") @Email(message = "invalid Email") String email) {
+        this.email = email;
+    }
+
+    public String getCompanyDescription() {
+        return companyDescription;
+    }
+
+    public void setCompanyDescription(String companyDescription) {
+        this.companyDescription = companyDescription;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 
     public User getEmployer() {
@@ -142,28 +190,12 @@ public class Job {
         this.employer = employer;
     }
 
-    public JobType getJobType() {
-        return jobType;
-    }
-
-    public void setJobType(JobType jobType) {
-        this.jobType = jobType;
-    }
-
     public List<JobApplication> getApplications() {
         return applications;
     }
 
     public void setApplications(List<JobApplication> applications) {
         this.applications = applications;
-    }
-
-    public LocalDate getDeadline() {
-        return deadline;
-    }
-
-    public void setDeadline(LocalDate deadline) {
-        this.deadline = deadline;
     }
 
     @Override
@@ -177,11 +209,14 @@ public class Job {
                 ", location='" + location + '\'' +
                 ", type='" + type + '\'' +
                 ", salary=" + salary +
-                ", company=" + company +
-                ", employer=" + employer +
                 ", jobType=" + jobType +
-                ", applications=" + applications +
                 ", deadline=" + deadline +
+                ", CompanyName='" + CompanyName + '\'' +
+                ", email='" + email + '\'' +
+                ", companyDescription='" + companyDescription + '\'' +
+                ", logo='" + logo + '\'' +
+                ", employer=" + employer +
+                ", applications=" + applications +
                 '}';
     }
 }

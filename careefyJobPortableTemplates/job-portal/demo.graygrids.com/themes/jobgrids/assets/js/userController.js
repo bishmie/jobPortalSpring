@@ -199,6 +199,7 @@ $(document).ready(function () {
 
         console.log("Sending:", { email, password });
 
+
         $.ajax({
             url: "http://localhost:8090/api/v1/auth/authenticate",
             type: "POST",
@@ -206,6 +207,8 @@ $(document).ready(function () {
             data: JSON.stringify({ email, password }),
             success: function (response) {
                 console.log("Response:", response);
+                console.log("Token saved:", localStorage.getItem("authToken"));
+
 
                 if (response.code === 201 && response.data && response.data.token) {
                     // Token eka localStorage ekata save karanawa
@@ -230,7 +233,9 @@ $(document).ready(function () {
                             showConfirmButton: false,
                             timer: 2000
                         }).then(() => {
-                            window.location.href = "dashboard.html"; // Redirect to normal dashboard
+                            // window.location.href = "dashboard.html"; // Redirect to normal dashboard
+                            console.log("hello im dashboard")
+                            window.location.href = "index.html";
                         });
                     }
                 } else {
