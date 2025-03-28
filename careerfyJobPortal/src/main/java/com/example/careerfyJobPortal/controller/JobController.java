@@ -24,6 +24,7 @@ public class JobController {
 
     @PostMapping("/add")
     public Job createJob(@Valid @RequestBody JobDTO jobDTO) {
+        System.out.println("Received job data: " + jobDTO);
         return jobService.saveJob(jobDTO);
 
     }

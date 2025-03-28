@@ -5,6 +5,7 @@ import com.example.careerfyJobPortal.service.UserService;
 import com.example.careerfyJobPortal.service.serviceImpl.UserServiceImpl;
 import com.example.careerfyJobPortal.utility.JwtUtil;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -87,5 +88,20 @@ public class JwtFilter extends OncePerRequestFilter {
 
     }
 
+    public String extractEmailFromToken(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey("2D4A614E645267556B58703273357638792F423F4428472B4B6250655368566DF423F4428472B4B6250655368566D")  // Use your secret key
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            // Get the email from the "sub" field
+            return claims.getSubject(); // The email should be in the "sub" field
+        } catch (JwtException e) {
+            // Handle any JWT parsing exceptions, like expired token or invalid token
+            System.out.println("Error decoding token: " + e.getMessage());
+            return null;
+        }
+    }
 
 }

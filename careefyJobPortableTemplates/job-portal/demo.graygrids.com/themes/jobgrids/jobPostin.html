@@ -151,7 +151,7 @@
                             <div class="col-lg-6 col-md-6">
                                 <div class="form-group">
                                     <label>Job Types*</label>
-                                    <select class="select">
+                                    <select name="jobType" class="select">
                                         <option value="1">Full Time</option>
                                         <option value="2">Part Time</option>
                                         <option value="3">Contract</option>
@@ -160,16 +160,10 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-lg-6 col-md-6">
+                            <div class="col-lg-12">
                                 <div class="form-group">
-                                    <label>Salary Currency</label>
-                                    <select class="select">
-                                        <option value="1">Default</option>
-                                        <option value="2">20000 To 30000</option>
-                                        <option value="3">40000 To 50000</option>
-                                        <option value="4">60000 To 70000</option>
-                                        <option value="5">80000 To 90000</option>
-                                    </select>
+                                    <label>Salary*</label>
+                                    <input class="form-control" type="text" name="salary" placeholder="35000.00">
                                 </div>
                             </div>
 
@@ -186,7 +180,7 @@
                                 <div class="form-group">
                                     <label>Application Deadline</label>
                                     <div class="input-group date" id="datetimepicker">
-                                        <input type="text" class="form-control" placeholder="12/11/2020">
+                                        <input type="text" class="form-control" id="date"  placeholder="12/11/2020">
                                         <span class="input-group-addon"></span>
                                         <i class="bx bx-calendar"></i>
                                     </div>
@@ -252,6 +246,13 @@
     </div>
     </div>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
 
 <!--<script>-->
 <!--    // Function to load job types-->
@@ -376,12 +377,17 @@
 
         // Load job types when the page is ready
         loadJobTypes();
+    } );
 
-        // Handle form submission
-        document.getElementById("jobPostForm").addEventListener("submit", async function(event) {
-            event.preventDefault(); // Prevent default form submission
+</script>
 
-            const token = localStorage.getItem("authToken"); // Retrieve token
+<script>
+        document.getElementById("jobPostForm").addEventListener("submit", function (event) {
+            event.preventDefault(); // Avoid form submission
+
+            const token = localStorage.getItem("authToken"); // Get token
+            console.log("JWT Token:", token);  // Log the token to see if it's valid
+
             if (!token) {
                 alert("User not authenticated!");
                 return;
@@ -389,55 +395,247 @@
 
             try {
                 const decoded = jwt_decode(token);
-                return decoded.user_id; // Assuming your JWT has a 'role' claim
-            } catch (e) {
-                console.error("Error decoding token:", e);
-                return null;
-            }
+                console.log("Decoded Token:", decoded);
+                const userEmail = decoded.email || decoded.sub;
+                console.log("User Email:", userEmail);
 
-            const formData = new FormData(event.target);
-            const jobData = {
-                title: formData.get("title"),
-                description: formData.get("message"),
-                responsibilities: formData.get("ResponsibilitiesMessage"),
-                experience: formData.get("ExMessage"),
-                location: formData.get("location"),
-                jobTypeId: document.querySelector(".select[name='jobType']").value, // Job Type
-                salary: document.querySelector(".select[name='salaryCurrency']").value, // Salary Currency
-                deadline: formData.get("deadline"), // Deadline
-                companyName: formData.get("Company"), // Company Name
-                email: formData.get("Email"), // Company Email
-                company_description: formData.get("companyDesc"), // Company Description
-                logo: formData.get("img")
-                // Company Logo (File)
+                if (!userEmail) {
+                    alert("Email not found in token!");
+                    return;
+                }
 
-            };
-
-            console.log(jobData);
-
-
-            try {
-                const response = await fetch("http://localhost:8090/jobs/add", {
-                    method: "POST",
+                // Backend API to get user ID based on email using AJAX
+                $.ajax({
+                    url: `http://localhost:8090/users/getByEmail`,
+                    method: "GET",
                     headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
+                        "Authorization": "Bearer " + token,
+                        "Content-Type": "application/json"
                     },
-                    body: JSON.stringify(jobData)
+                    success: function (userData) {
+                        console.log("User data from API:", userData);
+
+                        const userId = userData.userId;
+                        console.log(userId)
+                        if (!userId) {
+                            alert("User ID not found in the response");
+                            return;
+                        }
+                        console.log(userId)
+
+                        // Get form data
+                        const formData = new FormData(event.target);
+                        // const formattedDeadline = moment(deadline, "MM/DD/YYYY").format("YYYY-MM-DD");
+                        const jobData = {
+                            title: formData.get("title"),
+                            description: formData.get("message"),
+                            responsibilities: formData.get("ResponsibilitiesMessage"),
+                            experience: formData.get("ExMessage"),
+                            location: formData.get("location"),
+                            jobTypeId: document.querySelector(".select[name='jobType']").value,
+                            salary: formData.get("salary"),
+                             deadline :document.getElementById("date").value,
+                            companyName: formData.get("Company"),
+                            email: formData.get("Email"),
+                            companyDescription: formData.get("CompanyDesc"),
+                            logo: formData.get("img"),
+                            userId: userId // Send User ID in job data
+                        };
+
+                        console.log(jobData); // Debugging
+
+                        // Send job post request using AJAX
+                        $.ajax({
+                            url: "http://localhost:8090/jobs/add",
+                            method: "POST",
+                            headers: {
+                                "Authorization": "Bearer " + token,
+                                "Content-Type": "application/json"
+                            },
+                            data: JSON.stringify(jobData),
+                            success: function () {
+                                alert("Job posted successfully!");
+                                // window.location.reload(); // Reload page on success
+                            },
+                            error: function (error) {
+                                console.error("Error:", error);
+                                alert("Error posting job!");
+                            }
+                        });
+                    },
+                    error: function () {
+                        alert("User not found");
+                    }
                 });
-
-                if (!response.ok) throw new Error("Failed to post job");
-
-                alert("Job posted successfully!");
-                window.location.reload(); // Reload page after successful submission
             } catch (error) {
                 console.error("Error:", error);
                 alert("Error posting job!");
             }
         });
 
-    });
+
+
+
+        // Handle form submission
+    //     document.getElementById("jobPostForm").addEventListener("submit", async function(event) {
+    //         event.preventDefault(); // Prevent default form submission
+    //
+    //         const token = localStorage.getItem("authToken"); // Retrieve token
+    //         if (!token) {
+    //             alert("User not authenticated!");
+    //             return;
+    //         }
+    //
+    //         try {
+    //             const decoded = jwt_decode(token);
+    //             console.log(decoded); // Debugging: Check the decoded token
+    //             console.log(decoded.user_id)
+    //             return decoded.user_id; // Assuming the JWT contains 'user_id'
+    //         } catch (e) {
+    //             console.error("Error decoding token:", e);
+    //             return null;
+    //         }
+    //
+    //
+    //         const formData = new FormData(event.target);
+    //         const jobData = {
+    //             title: formData.get("title"),
+    //             description: formData.get("message"),
+    //             responsibilities: formData.get("ResponsibilitiesMessage"),
+    //             experience: formData.get("ExMessage"),
+    //             location: formData.get("location"),
+    //             jobTypeId: document.querySelector(".select[name='jobType']").value, // Job Type
+    //             salary: document.querySelector(".select[name='salaryCurrency']").value, // Salary Currency
+    //             deadline: formData.get("deadline"), // Deadline
+    //             companyName: formData.get("Company"), // Company Name
+    //             email: formData.get("Email"), // Company Email
+    //             company_description: formData.get("companyDesc"), // Company Description
+    //             logo: formData.get("img")
+    //             // Company Logo (File)
+    //
+    //         };
+    //
+    //         console.log(jobData);
+    //
+    //
+    //         try {
+    //             const response = await fetch("http://localhost:8090/jobs/add", {
+    //                 method: "POST",
+    //                 headers: {
+    //                     "Content-Type": "application/json",
+    //                     "Authorization": `Bearer ${token}`
+    //                 },
+    //                 body: JSON.stringify(jobData)
+    //             });
+    //
+    //             if (!response.ok) throw new Error("Failed to post job");
+    //
+    //             alert("Job posted successfully!");
+    //             window.location.reload(); // Reload page after successful submission
+    //         } catch (error) {
+    //             console.error("Error:", error);
+    //             alert("Error posting job!");
+    //         }
+    //     });
+    //
+    // });
 
 </script>
 </body>
 </html>
+
+
+
+
+<!--document.getElementById("jobPostForm").addEventListener("submit", async function (event) {-->
+<!--event.preventDefault(); // Form submission avoid කරන්න-->
+
+<!--const token = localStorage.getItem("authToken"); // Token එක ගන්න-->
+<!--if (!token) {-->
+<!--alert("User not authenticated!");-->
+<!--return;-->
+<!--}-->
+
+<!--try {-->
+<!--const decoded = jwt_decode(token);-->
+<!--const userEmail = decoded.email || decoded.sub;-->
+<!--console.log("User Email:", userEmail);-->
+
+<!--console.log(decoded)-->
+<!--console.log("Decoded Email:", userEmail, "Type:", typeof userEmail);-->
+
+
+<!--if (!userEmail) {-->
+<!--alert("Email not found in token!");-->
+<!--console.log("Decoded Email:", userEmail, "Type:", typeof userEmail);-->
+
+<!--return;-->
+<!--}-->
+
+<!--// Backend එකේ `getByEmail` API එකෙන් user ID එක ගන්න-->
+<!--const userResponse = await fetch(`http://localhost:8090/users/getByEmail`, {-->
+<!--method: "GET",-->
+<!--headers: {-->
+<!--"Authorization": "Bearer " + token,-->
+<!--"Content-Type": "application/json"-->
+<!--}-->
+<!--});-->
+
+<!--if (!userResponse.ok) {-->
+<!--throw new Error("User not found");-->
+<!--}-->
+
+<!--const userData = await userResponse.json();-->
+<!--console.log("User data from API:", userData); // Log the user data response-->
+
+<!--const userId = userData.userId;-->
+<!--if (!userId) {-->
+<!--alert("User ID not found in the response");-->
+<!--return;-->
+<!--}-->
+
+<!--// Now you can proceed with using the userId in jobData-->
+
+
+<!--// Form එකේ data එක ගන්න-->
+<!--const formData = new FormData(event.target);-->
+<!--const jobData = {-->
+<!--title: formData.get("title"),-->
+<!--description: formData.get("message"),-->
+<!--responsibilities: formData.get("ResponsibilitiesMessage"),-->
+<!--experience: formData.get("ExMessage"),-->
+<!--location: formData.get("location"),-->
+<!--jobTypeId: document.querySelector(".select[name='jobType']").value,-->
+<!--salary: document.querySelector(".select[name='salaryCurrency']").value,-->
+<!--deadline: formData.get("datetimepicker"),-->
+<!--companyName: formData.get("Company"),-->
+<!--email: formData.get("Email"),-->
+<!--companyDescription: formData.get("CompanyDesc"),-->
+<!--logo: formData.get("img"),-->
+<!--userId: userId // User ID එක Job entity එකට යවන්න-->
+<!--};-->
+
+<!--console.log(jobData); // Debugging-->
+
+<!--// Backend එකට job post request එක යවන්න-->
+<!--const response = await fetch("http://localhost:8090/jobs/add", {-->
+<!--method: "POST",-->
+<!--headers: {-->
+<!--"Content-Type": "application/json",-->
+<!--"Authorization": "Bearer " + localStorage.getItem("token"),-->
+<!--},-->
+<!--body: JSON.stringify(jobData)-->
+<!--});-->
+
+<!--if (!response.ok) throw new Error("Failed to post job");-->
+
+<!--alert("Job posted successfully!");-->
+<!--window.location.reload(); // Success නම් page එක reload කරන්න-->
+<!--} catch (error) {-->
+<!--console.error("Error:", error);-->
+<!--alert("Error posting job!");-->
+<!--console.log(jobData); // Debugging-->
+
+<!--}-->
+<!--});-->
+<!--*/-->

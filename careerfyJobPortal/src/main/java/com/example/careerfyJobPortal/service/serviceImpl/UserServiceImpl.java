@@ -168,6 +168,10 @@ public class UserServiceImpl implements UserDetailsService,UserService {
         }
     }
 
+    @Override
+    public User findByEmail(String email) {
+        return userRepositry.findByEmail(email);
+    }
 
 
 }

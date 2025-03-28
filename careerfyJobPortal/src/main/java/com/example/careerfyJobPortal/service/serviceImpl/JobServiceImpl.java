@@ -87,6 +87,7 @@ public class JobServiceImpl implements JobService {
                 .orElseThrow(() -> new RuntimeException("Employer not found"));
         job.setEmployer(employer);
 
+        System.out.println("Saving job to database: " + job);
         // Save Job to Database
         return jobRepository.save(job);
     }

@@ -6,10 +6,12 @@ import com.example.careerfyJobPortal.dto.AuthDTO;
 import com.example.careerfyJobPortal.dto.ResponseDTO;
 import com.example.careerfyJobPortal.dto.UserDto;
 import com.example.careerfyJobPortal.dto.UserloggingDto;
+import com.example.careerfyJobPortal.entity.User;
 import com.example.careerfyJobPortal.service.UserService;
 import com.example.careerfyJobPortal.utility.JwtUtil;
 import com.example.careerfyJobPortal.utility.ResponseUtil;
 import com.example.careerfyJobPortal.utility.VarList;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -20,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -151,6 +154,29 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
         }
     }
+
+
+
+    @GetMapping("/getByEmail")
+//    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public ResponseEntity<?> getUserIdByEmail(HttpServletRequest request) {
+        // Extract the token from the Authorization header
+        String token = request.getHeader("Authorization").substring(7);  // Remove "Bearer " from token
+        String email = jwtFilter.extractEmailFromToken(token);  // Use a utility method to extract email from the JWT token
+
+        if (email == null || email.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Email not found in token");
+        }
+
+        // Fetch user by email
+        User user = userService.findByEmail(email);
+        if (user != null) {
+            return ResponseEntity.ok(Collections.singletonMap("userId", user.getId()));
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+    }
+
+
 
 
 

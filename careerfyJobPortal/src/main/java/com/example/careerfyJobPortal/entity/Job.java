@@ -25,12 +25,12 @@ public class Job {
 
     private String location;
     private String type; // Full-time, Part-time, Remote
-    private Double salary;
+    private String salary;
 
     @ManyToOne
     @JoinColumn(name = "job_type_id")
     private JobType jobType;
-    private LocalDate deadline;
+    private String deadline;
 
     private String CompanyName;
 //    @NotBlank(message = "email is null")
@@ -48,7 +48,7 @@ public class Job {
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL)
     private List<JobApplication> applications;
 
-    public Job(Long id, String title, String description, String responsibilities, String experience, String location, String type, Double salary, JobType jobType, LocalDate deadline, String companyName, String email, String companyDescription, String logo, User employer, List<JobApplication> applications) {
+    public Job(Long id, String title, String description, String responsibilities, String experience, String location, String type, String salary, JobType jobType, String deadline, String companyName, String email, String companyDescription, String logo, User employer, List<JobApplication> applications) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -59,7 +59,7 @@ public class Job {
         this.salary = salary;
         this.jobType = jobType;
         this.deadline = deadline;
-        CompanyName = companyName;
+        this.CompanyName = companyName;
         this.email = email;
         this.companyDescription = companyDescription;
         this.logo = logo;
@@ -126,11 +126,11 @@ public class Job {
         this.type = type;
     }
 
-    public Double getSalary() {
+    public String getSalary() {
         return salary;
     }
 
-    public void setSalary(Double salary) {
+    public void setSalary(String salary) {
         this.salary = salary;
     }
 
@@ -142,11 +142,11 @@ public class Job {
         this.jobType = jobType;
     }
 
-    public LocalDate getDeadline() {
+    public String getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(LocalDate deadline) {
+    public void setDeadline(String deadline) {
         this.deadline = deadline;
     }
 

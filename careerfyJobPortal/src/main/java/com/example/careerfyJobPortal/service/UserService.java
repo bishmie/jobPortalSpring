@@ -29,6 +29,8 @@ public interface UserService {
 
     void deactivateUser(UserDto userDTO);
 
+    User findByEmail(String email);
+
 
 //    int addUser(UserDto userDTO);
 

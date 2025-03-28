@@ -19,9 +19,9 @@ import java.time.LocalDate;
     private String experience;
     private String location;
     private String type; // Full-time, Part-time, Remote
-    private Double salary;
+    private String salary;
     private Long jobTypeId;
-    private LocalDate deadline;
+    private String deadline;
     private String CompanyName;
 //        @NotBlank(message = "Email cannot be null")
 //        @Email(message = "Invalid email format")
@@ -35,7 +35,7 @@ import java.time.LocalDate;
         }
 
 
-        public JobDTO(Long id, String title, String description, String responsibilities, String experience, String location, String type, Double salary, Long jobTypeId, LocalDate deadline, String companyName, String email, String companyDescription, String logo, int employerId) {
+        public JobDTO(Long id, String title, String description, String responsibilities, String experience, String location, String type, String salary, Long jobTypeId, String deadline, String companyName, String email, String companyDescription, String logo, int employerId) {
             this.id = id;
             this.title = title;
             this.description = description;
@@ -46,7 +46,7 @@ import java.time.LocalDate;
             this.salary = salary;
             this.jobTypeId = jobTypeId;
             this.deadline = deadline;
-            CompanyName = companyName;
+            this.CompanyName = companyName;
             this.email = email;
             this.companyDescription = companyDescription;
             this.logo = logo;
@@ -109,11 +109,11 @@ import java.time.LocalDate;
             this.type = type;
         }
 
-        public Double getSalary() {
+        public String getSalary() {
             return salary;
         }
 
-        public void setSalary(Double salary) {
+        public void setSalary(String salary) {
             this.salary = salary;
         }
 
@@ -125,11 +125,11 @@ import java.time.LocalDate;
             this.jobTypeId = jobTypeId;
         }
 
-        public LocalDate getDeadline() {
+        public String getDeadline() {
             return deadline;
         }
 
-        public void setDeadline(LocalDate deadline) {
+        public void setDeadline(String deadline) {
             this.deadline = deadline;
         }
 
