@@ -11,13 +11,14 @@ import com.example.careerfyJobPortal.repositry.JobRepositry;
 import com.example.careerfyJobPortal.repositry.JobTypeRepository;
 import com.example.careerfyJobPortal.repositry.UserRepositry;
 import com.example.careerfyJobPortal.service.JobService;
+import com.example.careerfyJobPortal.utility.FileUploadUtil;
+import com.example.careerfyJobPortal.utility.VarList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,7 +63,7 @@ public class JobServiceImpl implements JobService {
 //    }
 
 
-    public Job saveJob(JobDTO jobDTO) {
+    public int saveJob(JobDTO jobDTO,List<MultipartFile> files) {
         Job job = new Job();
         job.setTitle(jobDTO.getTitle());
         job.setDescription(jobDTO.getDescription());
@@ -82,6 +83,33 @@ public class JobServiceImpl implements JobService {
                 .orElseThrow(() -> new RuntimeException("Job type not found"));
         job.setJobType(jobType);
 
+        if (files != null && !files.isEmpty()) {
+            List<String> imagePaths = new ArrayList<>();
+
+            try {
+                for (int i = 0; i < files.size(); i++) {
+                    MultipartFile file = files.get(i);
+                    if (file != null && !file.isEmpty()) {
+                        String fileName =  file.getOriginalFilename();
+                        String uploadDir = "job/" +jobDTO.getCompanyName();
+                        FileUploadUtil.saveFile(uploadDir, fileName, file);
+                        String filePath = "uploads/" + uploadDir + "/" + fileName;
+                        imagePaths.add(filePath);
+
+                        if (i == 0) {
+                            jobDTO.setLogo(filePath);
+                        }
+                    }
+                }
+
+
+            } catch (IOException e) {
+                throw new RuntimeException("File saving failed: " + e.getMessage());
+            }
+        }
+
+
+
         // Set Employer from DTO
         User employer = userRepository.findById(jobDTO.getEmployerId())
                 .orElseThrow(() -> new RuntimeException("Employer not found"));
@@ -89,7 +117,8 @@ public class JobServiceImpl implements JobService {
 
         System.out.println("Saving job to database: " + job);
         // Save Job to Database
-        return jobRepository.save(job);
+        jobRepository.save(job);
+        return VarList.Created;
     }
 
     @Override

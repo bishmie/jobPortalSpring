@@ -2,14 +2,21 @@ package com.example.careerfyJobPortal.controller;
 
 import com.example.careerfyJobPortal.dto.JobDTO;
 import com.example.careerfyJobPortal.dto.JobsDto;
+import com.example.careerfyJobPortal.dto.ResponseDTO;
 import com.example.careerfyJobPortal.entity.Job;
 import com.example.careerfyJobPortal.service.JobService;
+import com.example.careerfyJobPortal.service.serviceImpl.JobServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -22,10 +29,29 @@ public class JobController {
     @Autowired
     private JobService jobService;
 
-    @PostMapping("/add")
-    public Job createJob(@Valid @RequestBody JobDTO jobDTO) {
+    @Autowired
+    private JobServiceImpl jobServiceImpl;
+
+    @PostMapping(value = "/add",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ResponseDTO> createJob(
+                             @RequestPart("job") @Valid String jobDTO,
+                             @RequestPart("files")List<MultipartFile>files) throws JsonProcessingException {
         System.out.println("Received job data: " + jobDTO);
-        return jobService.saveJob(jobDTO);
+
+
+        try{
+            ObjectMapper objectMapper = new ObjectMapper();
+            JobDTO jobDTO1 = objectMapper.readValue(jobDTO, JobDTO.class);
+
+            int res = jobServiceImpl.saveJob(jobDTO1,files);
+
+
+        } catch (JsonMappingException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).build();
 
     }
 
