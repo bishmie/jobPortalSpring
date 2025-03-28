@@ -13,7 +13,7 @@ public class FileUploadUtil {
 
     public static  void saveFile(String uploadDir, String fileName, MultipartFile multipartFile) throws IOException {
 
-        Path uploadPath = Paths.get("C:\\Users\\Bishmi\\Desktop\\careerfyJobPortalSpring\\careerfyJobPortal\\src\\main\\resources\\uploads\\"+uploadDir);
+        Path uploadPath = Paths.get("C:\\Users\\Bishmi\\Downloads\\jobPortalSpring23\\jobPortalSpring2\\careerfyJobPortal\\src\\main\\resources\\uploads\\" + uploadDir);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
@@ -23,6 +23,7 @@ public class FileUploadUtil {
         } catch (IOException ignored) {
 
   }
+
 
 }
 

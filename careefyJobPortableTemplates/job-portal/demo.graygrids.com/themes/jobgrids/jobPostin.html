@@ -389,7 +389,7 @@
 
 
         $(document).ready(function () {
-        const token = localStorage.getItem("authToken"); // Get token
+        const token = localStorage.getItem("token"); // Get token
         console.log("JWT Token:", token);  // Log the token to see if it's valid
 
         if (!token) {
@@ -428,96 +428,113 @@
         console.log("User ID:", userId);
 
         // Form Submission
-        $('#jobPostForm').submit(function (e) {
-        e.preventDefault();
+            $('#jobPostForm').submit(function (e) {
+                e.preventDefault();
+                console.debug("[DEBUG] Form submission initiated");
 
-        var title = $('#title').val().trim();
-        var description = $('#description').val().trim();
-        var responsibilities = $('#responsibilities').val().trim();
-        var experience = $('#experience').val().trim();
-        var location = $('#location').val().trim();
-        var jobType = $('#jobType').val();
-        var salary = $('#salary').val().trim();
-        var category = $('#jobTypeSelect').val();
-        var deadline = $('#date').val().trim();
-        var companyName = $('#companyName').val().trim();
-        var emails = $('#email').val().trim();
-        // var fileInput = document.getElementById("img");
-        // var file = fileInput.files[0]; // Get file properly
+                // Collect form data
+                const formData = {
+                    title: $('#title').val().trim(),
+                    description: $('#description').val().trim(),
+                    responsibilities: $('#responsibilities').val().trim(),
+                    experience: $('#experience').val().trim(),
+                    location: $('#location').val().trim(),
+                    type: $('#jobType').val(),
+                    salary: $('#salary').val().trim(),
+                    jobTypeId: $('#jobTypeSelect').val(),
+                    deadline: $('#date').val().trim(),
+                    companyName: $('#companyName').val().trim(),
+                    email: $('#email').val().trim(),
+                    employerId: userId, // Make sure this is defined from earlier code
+                    companyDescription: $('#comDesc').val().trim()
+                };
 
-        console.log("Title:", $('#title').val().trim());
-        console.log("Description:", $('#description').val().trim());
-        console.log("Responsibilities:", $('#responsibilities').val().trim());
-        console.log("Experience:", $('#experience').val().trim());
-        console.log("Location:", $('#location').val().trim());
-        console.log("Job Type:", $('#jobType').val());
-        console.log("Salary:", $('#salary').val().trim());
-        console.log("Category:", $('#jobTypeSelect').val());
-        console.log("Deadline:", $('#date').val().trim());
-        console.log("Company Name:", $('#companyName').val().trim());
-        console.log("Email:", $('#email').val().trim());
+                console.log("Form Data:========", formData);
 
-        var fileInput = document.getElementById("img");
-        var file = fileInput.files[0];
-        console.log("File:", file ? file.name : "No file selected");
+                // Validate required fields
+                const missingFields = Object.entries(formData)
+                    .filter(([key, value]) => !value && key !== 'userId') // userId might come from elsewhere
+                    .map(([key]) => key);
 
-        if (!title || !description || !responsibilities || !experience || !location || !jobType || !salary || !category || !deadline || !companyName || !emails || !file) {
-        Swal.fire("Oops...", "Please fill all fields!", "warning");
-        return;
-    }
+                if (missingFields.length > 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Missing Information',
+                        html: `Please fill in: <strong>${missingFields.join(', ')}</strong>`
+                    });
+                    return;
+                }
 
-        // Use FormData for file upload
-        var formData = new FormData();
-        formData.append("job", JSON.stringify({
-        title: title,
-        description: description,
-        responsibilities: responsibilities,
-        experience: experience,
-        location: location,
-        jobType: jobType,
-        salary: salary,
-        category: category,
-        deadline: deadline,
-        companyName: companyName,
-        email: emails,
-            file:file,
-            userId:userId
-    }));
-        formData.append("files", file);
-        formData.append("userId", userId);
+                // File handling
+                const fileInput = document.getElementById("img");
+                const file = fileInput.files[0];
 
-        $.ajax({
-        url: 'http://localhost:8090/jobs/add',
-        type: 'POST',
-        headers: {
-        "Authorization": "Bearer " + token
-    },
-        processData: false,
-        contentType: false,
-        data: formData,
-        success: function (response) {
-        console.log("Response:", response);
+                if (!file) {
+                    Swal.fire('Warning', 'Please select a company logo/image', 'warning');
+                    return;
+                }
 
-        if (response.code === 201) {
-        Swal.fire({
-        icon: "success",
-        title: "Job Posted Successfully",
-        text: "Redirecting...",
-        showConfirmButton: false,
-        timer: 2000
-    }).then(() => {
-        console.log("Job posted successfully!");
-    });
-    } else {
-        Swal.fire("Posting Failed", response.message, "error");
-    }
-    },
-        error: function (xhr) {
-        console.log("Error:", xhr.responseText);
-        Swal.fire("Error!", "There was an error: " + xhr.responseText, "error");
-    }
-    });
-    });
+                // Prepare FormData exactly as backend expects
+                const multipartFormData = new FormData();
+                multipartFormData.append("job", JSON.stringify(formData));
+
+                // Backend expects List<MultipartFile> so we need to send array
+                multipartFormData.append("files", file); // Note: using "files" as parameter name
+
+                console.debug("[DEBUG] Sending data:", {
+                    formData: formData,
+                    fileName: file.name
+                });
+
+                // AJAX Request
+                $.ajax({
+                    url: 'http://localhost:8090/jobs/add',
+                    type: 'POST',
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                    processData: false,
+                    contentType: false,
+                    data: multipartFormData,
+                    beforeSend: function() {
+                        Swal.fire({
+                            title: 'Processing...',
+                            allowOutsideClick: false,
+                            didOpen: () => Swal.showLoading()
+                        });
+                    },
+                    success: function(response, status, xhr) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Job Posted!',
+                            text: 'Your job has been successfully posted',
+                            timer: 2000
+                        }).then(() => {
+                            window.location.href = '/jobs'; // Redirect after success
+                        });
+                    },
+                    error: function(xhr) {
+                        let errorMsg = "An error occurred while posting the job";
+
+                        try {
+                            // Try to parse backend error response if it's JSON
+                            const errorResponse = JSON.parse(xhr.responseText);
+                            errorMsg = errorResponse.message || errorMsg;
+                        } catch (e) {
+                            // If not JSON, show raw response (truncated)
+                            errorMsg = xhr.responseText ?
+                                xhr.responseText.substring(0, 100) :
+                                "Server error (500)";
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Posting Failed',
+                            html: `<strong>Error ${xhr.status}</strong><br>${errorMsg}`
+                        });
+                    }
+                });
+            });
 
     },
         error: function () {

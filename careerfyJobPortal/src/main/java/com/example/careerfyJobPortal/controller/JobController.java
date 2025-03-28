@@ -7,6 +7,7 @@ import com.example.careerfyJobPortal.entity.Job;
 import com.example.careerfyJobPortal.service.JobService;
 import com.example.careerfyJobPortal.service.serviceImpl.JobServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
@@ -32,27 +33,43 @@ public class JobController {
     @Autowired
     private JobServiceImpl jobServiceImpl;
 
-    @PostMapping(value = "/add",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/add", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ResponseDTO> createJob(
-                             @RequestPart("job") @Valid String jobDTO,
-                             @RequestPart("files")List<MultipartFile>files) throws JsonProcessingException {
-        System.out.println("Received job data: " + jobDTO);
+            @RequestPart("job") @Valid String jobDTO,
+            @RequestPart("files") List<MultipartFile> files) {
 
+        try {
+            System.out.println("Raw JSON received: " + jobDTO);
 
-        try{
+            System.out.println("Files received: "+ files);
+
             ObjectMapper objectMapper = new ObjectMapper();
+            // Configure to fail on unknown properties
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
             JobDTO jobDTO1 = objectMapper.readValue(jobDTO, JobDTO.class);
+            System.out.println("Successfully parsed to DTO: " + jobDTO1);
 
-            int res = jobServiceImpl.saveJob(jobDTO1,files);
-
+            int res = jobServiceImpl.saveJob(jobDTO1, files);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
 
         } catch (JsonMappingException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            System.err.println("JSON Mapping Error: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseDTO(400, "Invalid JSON structure: " + e.getMessage()));
 
+        } catch (JsonProcessingException e) {
+            System.err.println("JSON Processing Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseDTO(400, "JSON processing error"));
 
+        } catch (Exception e) {
+            System.err.println("General Error: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.internalServerError()
+                    .body(new ResponseDTO(500, "Server error"));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-
     }
 
 

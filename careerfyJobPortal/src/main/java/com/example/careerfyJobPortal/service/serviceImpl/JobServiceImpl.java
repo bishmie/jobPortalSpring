@@ -64,6 +64,8 @@ public class JobServiceImpl implements JobService {
 
 
     public int saveJob(JobDTO jobDTO,List<MultipartFile> files) {
+        System.out.println("Saving job: " + jobDTO);
+        System.out.println("Savingggg Files: " + files);
         Job job = new Job();
         job.setTitle(jobDTO.getTitle());
         job.setDescription(jobDTO.getDescription());
@@ -84,27 +86,30 @@ public class JobServiceImpl implements JobService {
         job.setJobType(jobType);
 
         if (files != null && !files.isEmpty()) {
-            List<String> imagePaths = new ArrayList<>();
+            MultipartFile file = files.get(0); // Get first file
+            if (file != null && !file.isEmpty()) {
+                try {
+                    // 1. Create unique filename
+                    String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
-            try {
-                for (int i = 0; i < files.size(); i++) {
-                    MultipartFile file = files.get(i);
-                    if (file != null && !file.isEmpty()) {
-                        String fileName =  file.getOriginalFilename();
-                        String uploadDir = "job/" +jobDTO.getCompanyName();
-                        FileUploadUtil.saveFile(uploadDir, fileName, file);
-                        String filePath = "uploads/" + uploadDir + "/" + fileName;
-                        imagePaths.add(filePath);
+                    // 2. Define upload directory
+                    String uploadDir = "\\jobs\\" + jobDTO.getCompanyName();
 
-                        if (i == 0) {
-                            jobDTO.setLogo(filePath);
-                        }
-                    }
+                    // 3. Save file
+                    FileUploadUtil.saveFile(uploadDir, fileName, file);
+
+                    // 4. Set relative path in entity
+                    String filePath = uploadDir + "\\" + fileName;
+                    job.setLogo(filePath);
+
+                    // 5. Also set in DTO if needed elsewhere
+                    jobDTO.setLogo(filePath);
+
+                    System.out.println("Saved logo to: " + filePath);
+                } catch (IOException e) {
+                    System.err.println("Failed to save logo: " + e.getMessage());
+                    // Decide whether to proceed without logo or fail
                 }
-
-
-            } catch (IOException e) {
-                throw new RuntimeException("File saving failed: " + e.getMessage());
             }
         }
 
@@ -118,6 +123,7 @@ public class JobServiceImpl implements JobService {
         System.out.println("Saving job to database: " + job);
         // Save Job to Database
         jobRepository.save(job);
+
         return VarList.Created;
     }
 

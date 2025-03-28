@@ -21,6 +21,11 @@ public class ResponseDTO {
     public ResponseDTO() {
     }
 
+    public ResponseDTO(int i, String jsonProcessingError) {
+        this.code = i;
+        this.message = jsonProcessingError;
+    }
+
     public int getCode() {
         return code;
     }

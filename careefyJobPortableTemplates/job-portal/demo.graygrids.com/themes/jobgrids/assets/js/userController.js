@@ -80,6 +80,7 @@ $(document).ready(function () {
             data: JSON.stringify(userData),
             success: function (response) {
                 console.log("Response:", response);
+                console.log("token", response.data);
 
                 if (response.code === 201) {
                     // Save token to localStorage
@@ -92,7 +93,7 @@ $(document).ready(function () {
                         showConfirmButton: false,
                         timer: 2000
                     }).then(() => {
-                        window.location.href = "dashboard.html";
+                        // window.location.href = "dashboard.html";
                     });
                 } else {
                     Swal.fire("Registration Failed", response.message, "error");
