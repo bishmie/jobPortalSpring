@@ -174,7 +174,15 @@ public class JobServiceImpl implements JobService {
                         job.getLocation(),
                         job.getType(),
                         job.getCompanyName(),
+                        job.getSalary(),
                         job.getLogo()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<JobsDto> getAllJobsForCards() {
+        return jobRepository.findAll().stream()
+                .map(JobsDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -198,6 +206,8 @@ public class JobServiceImpl implements JobService {
 //    }
 
 
-
+    public Job getJobById(Long id) {
+        return jobRepository.findById(id).orElse(null);
+    }
 
 }

@@ -506,8 +506,55 @@
     <script src="assets/js/tiny-slider.js"></script>
     <script src="assets/js/glightbox.min.js"></script>
     <script src="assets/js/main.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </body>
 
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: `http://localhost:8090/jobs/getAllForJobCards`, // Backend endpoint eka
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                let jobContainer = $(".find-job .row"); // Job cards yawanna denna
 
+                jobContainer.empty(); // Cards clear karanawa
+
+                data.forEach(job => {
+                    let jobCard = `
+                    <div class="col-lg-6 col-12">
+                        <div class="single-job">
+                            <div class="job-image">
+                                <img src="${job.logo}" alt="#">
+                            </div>
+                            <div class="job-content">
+                                <h4><a href="job-details.html?id=${job.id}">${job.title}</a></h4>
+                                <p>${job.description}</p>
+                                <ul>
+                                    <li><i class="lni lni-website"></i><a href="#"> ${job.companyName}</a></li>
+                                    <li><i class="lni lni-dollar"></i> ${job.salary}</li>
+                                    <li><i class="lni lni-map-marker"></i> ${job.location}</li>
+                                </ul>
+                            </div>
+                            <div class="job-button">
+                                <ul>
+                                    <li><a href="job-details.html?id=${job.id}">Apply</a></li>
+                                    <li><span>${job.type}</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>`;
+
+                    jobContainer.append(jobCard);
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching jobs:", error);
+            }
+        });
+    });
+
+</script>
 <!-- Mirrored from demo.graygrids.com/themes/jobgrids/job-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 21 Mar 2025 07:28:21 GMT -->
 </html>

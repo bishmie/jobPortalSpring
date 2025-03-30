@@ -382,6 +382,55 @@
     <script src="assets/js/tiny-slider.js"></script>
     <script src="assets/js/glightbox.min.js"></script>
     <script src="assets/js/main.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // URL eken job ID eka ganna
+        const urlParams = new URLSearchParams(window.location.search);
+        const jobId = urlParams.get("id");
+
+        if (jobId) {
+            fetchJobDetails(jobId);
+        }
+    });
+
+    function fetchJobDetails(jobId) {
+        $.ajax({
+            url: `http://localhost:8090/getJobsById/${jobId}`,
+            type: "GET",
+            dataType: "json",
+            success: function (job) {
+                if (job) {
+                    displayJobDetails(job);
+                } else {
+                    console.error("Job not found");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching job details:", error);
+            }
+        });
+    }
+
+    function displayJobDetails(job) {
+        $(".company-logo img").attr("src", job.logo);
+        $(".salary-range").text(job.salary);
+        $(".badge-success").text(job.type);
+        $(".title").text(job.title);
+        $(".meta strong a").text(job.companyName);
+        $(".meta li i").nextSibling.nodeValue = " " + job.location;
+        $(".job-details-body p").text(job.description);
+
+        let responsibilitiesHTML = job.responsibilities.split("\n").map(item => `<li>${item}</li>`).join("");
+        $(".job-details-body ul").html(responsibilitiesHTML);
+
+        let experienceHTML = job.experience.split("\n").map(item => `<li>${item}</li>`).join("");
+        $(".job-overview.list-unstyled").append(`<li><strong>Experience:</strong> ${experienceHTML}</li>`);
+
+        $(".job-overview.list-unstyled").append(`<li><strong>Application Deadline:</strong> ${job.deadline}</li>`);
+    }
+</script>
 </body>
 
 

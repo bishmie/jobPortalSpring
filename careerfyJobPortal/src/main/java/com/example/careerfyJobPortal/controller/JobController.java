@@ -97,10 +97,21 @@ public class JobController {
 //    }
 
 
-    @GetMapping("/getAllForJobCards")
     public List<JobsDto> getAllJobsAttr() {
         // Return the list of JobDTOs containing only title and responsibilities
         return jobService.getAllForJobCard();
+    }
+
+    @GetMapping("/getAllForJobCards")
+    public ResponseEntity<List<JobsDto>> getAllJobsForCards() {
+        return ResponseEntity.ok(jobService.getAllJobsForCards());
+    }
+
+
+    @GetMapping("getJobsById/{id}")
+    public ResponseEntity<Job> getJobById(@PathVariable Long id) {
+        Job jobDetails = jobService.getJobById(id);
+        return jobDetails != null ? ResponseEntity.ok(jobDetails) : ResponseEntity.notFound().build();
     }
 
 }

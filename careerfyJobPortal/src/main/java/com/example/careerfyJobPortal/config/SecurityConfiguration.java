@@ -72,8 +72,10 @@ public class SecurityConfiguration {
                                 "users/getUserIdFromToken",
                                 "jobs/getAllForJobCards",
                                 "jobs/getAll",
+                                "jobs/getJobsById/{id}",
                                 "jobs/add",
                                 "jobs/update/",
+
 //                                 "users/getByEmail?email/{encodeURIComponent(userEmail)",
 //                                "jobs/get",
                                 "users/getByEmail",

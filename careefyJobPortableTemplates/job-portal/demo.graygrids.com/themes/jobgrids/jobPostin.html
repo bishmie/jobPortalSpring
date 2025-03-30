@@ -432,6 +432,13 @@
                 e.preventDefault();
                 console.debug("[DEBUG] Form submission initiated");
 
+                var jobTypeMap = {
+                    "1": "Full Time",
+                    "2": "Part Time",
+                    "3": "Contract",
+                    "4": "Internship",
+                    "5": "Office"
+                };
                 // Collect form data
                 const formData = {
                     title: $('#title').val().trim(),
@@ -439,7 +446,8 @@
                     responsibilities: $('#responsibilities').val().trim(),
                     experience: $('#experience').val().trim(),
                     location: $('#location').val().trim(),
-                    type: $('#jobType').val(),
+                    // type: $('#jobType').val(),
+                    type: jobTypeMap[$('#jobType').val()],
                     salary: $('#salary').val().trim(),
                     jobTypeId: $('#jobTypeSelect').val(),
                     deadline: $('#date').val().trim(),

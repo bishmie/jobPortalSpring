@@ -16,6 +16,10 @@ public interface JobService {
 
     List<JobsDto> getAllForJobCard();
 
+    List<JobsDto> getAllJobsForCards();
+
+    Job getJobById(Long id);
+
 //    Map<String, Object> getJobWithCompany(Long id);
 
 }
